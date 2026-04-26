@@ -6,7 +6,7 @@ Live site: https://keithwegner.github.io
 
 ## Overview
 
-This site is a minimalist personal homepage with a three-section layout, animated canvas background, and links to Bestgate Engineering, GitHub, and LinkedIn.
+This site is a minimalist personal homepage with a four-section layout, animated canvas background, timeline section, and links to GitHub, LinkedIn, and Bestgate Engineering.
 
 ## Tech Stack
 

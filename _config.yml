@@ -1,16 +1,17 @@
 name: Keith Wegner
-description: Principal / Bestgate Engineering
+description: Founder & Software Engineer
 url: https://keithwegner.github.io
 baseurl: ""
 permalink: /:title/
 
 links:
-  - label: Company
-    url: https://www.bestgateeng.com
   - label: GitHub
     url: https://github.com/keithwegner
   - label: LinkedIn
     url: https://www.linkedin.com/in/keithwegner/
+    primary: true
+  - label: Bestgate
+    url: https://www.bestgateeng.com
 
 kramdown:
   input: GFM

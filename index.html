@@ -5,17 +5,20 @@ title: Keith Wegner
 
 <section class="page-section hero-section" aria-labelledby="intro-title">
   <div class="section-inner hero">
-    <p class="eyebrow">Principal / Bestgate Engineering</p>
+    <p class="eyebrow">Founder &amp; Software Engineer</p>
     <h1 id="intro-title">Keith Wegner</h1>
     <p class="lede">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat
-      a ante venenatis dapibus posuere velit aliquet.
+      Business founder and software engineer building practical systems for
+      high-impact missions from Annapolis, MD.
     </p>
-    <p class="aside-copy">Focused, tidy, and only mildly dramatic.</p>
+    <p class="aside-copy">
+      Business leader. Software engineer. Father. Husband. Usually serious,
+      occasionally dry, and strongly opposed to needless complexity.
+    </p>
 
     <div class="hero-links" aria-label="Contact links">
       {% for link in site.links %}
-        <a href="{{ link.url }}">{{ link.label }}</a>
+        <a href="{{ link.url }}"{% if link.primary %} class="primary-link"{% endif %}>{{ link.label }}</a>
       {% endfor %}
     </div>
   </div>
@@ -25,32 +28,86 @@ title: Keith Wegner
   <div class="section-inner section-grid">
     <div>
       <p class="section-kicker">About</p>
-      <h2 id="about-title">Lorem ipsum with a little more voltage.</h2>
+      <h2 id="about-title">Software and systems engineering for mission-focused teams.</h2>
     </div>
     <div class="section-copy">
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere
-        erat a ante venenatis dapibus posuere velit aliquet.
+        Keith leads Bestgate Engineering, providing software and systems
+        engineering services for the U.S. Intelligence Community.
       </p>
       <p>
-        Donec ullamcorper nulla non metus auctor fringilla. Aenean lacinia
-        bibendum nulla sed consectetur.
+        His work supports Department of Defense cyber and CNO missions, with
+        depth across software engineering, DevOps, analytics, and
+        high-performance computing.
       </p>
     </div>
+  </div>
+</section>
+
+<section class="page-section timeline-section" aria-labelledby="timeline-title">
+  <div class="section-inner">
+    <div class="timeline-heading">
+      <p class="section-kicker">Timeline</p>
+      <h2 id="timeline-title">A few points on the map.</h2>
+    </div>
+
+    <ol class="timeline-list">
+      <li class="timeline-item">
+        <span class="timeline-node" aria-hidden="true"></span>
+        <article class="timeline-card">
+          <p class="timeline-year">1983</p>
+          <h3>Born</h3>
+          <p>Started in Maryland and eventually developed a habit of solving hard problems.</p>
+        </article>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-node" aria-hidden="true"></span>
+        <article class="timeline-card">
+          <p class="timeline-year">2005</p>
+          <h3>College</h3>
+          <p>Graduated and began turning technical curiosity into disciplined engineering work.</p>
+        </article>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-node" aria-hidden="true"></span>
+        <article class="timeline-card">
+          <p class="timeline-year">2009</p>
+          <h3>Married</h3>
+          <p>Built the partnership that still anchors the work, the family, and the calendar.</p>
+        </article>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-node" aria-hidden="true"></span>
+        <article class="timeline-card">
+          <p class="timeline-year">2015</p>
+          <h3>Founded Bestgate</h3>
+          <p>Started Bestgate Engineering to serve complex national security missions.</p>
+        </article>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-node" aria-hidden="true"></span>
+        <article class="timeline-card">
+          <p class="timeline-year">Now</p>
+          <h3>Leading Bestgate</h3>
+          <p>Leading Bestgate Engineering while supporting Cedar Solutions Group.</p>
+        </article>
+      </li>
+    </ol>
   </div>
 </section>
 
 <section class="page-section contact-section" aria-labelledby="contact-title">
   <div class="section-inner contact-panel">
     <p class="section-kicker">Connect</p>
-    <h2 id="contact-title">Lorem ipsum, neatly routed.</h2>
+    <h2 id="contact-title">Open-ended, but best routed through LinkedIn.</h2>
     <p>
-      Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius
-      blandit sit amet non magna.
+      For professional context, current work, or a useful conversation, LinkedIn
+      is the best starting point. GitHub and Bestgate are nearby when the trail
+      gets more technical or business-specific.
     </p>
     <div class="hero-links" aria-label="Contact links">
       {% for link in site.links %}
-        <a href="{{ link.url }}">{{ link.label }}</a>
+        <a href="{{ link.url }}"{% if link.primary %} class="primary-link"{% endif %}>{{ link.label }}</a>
       {% endfor %}
     </div>
   </div>
