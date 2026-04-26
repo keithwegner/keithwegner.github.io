@@ -1,51 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }} – {{ site.description }}</title>
-
+    <title>{% if page.title and page.title != site.name %}{{ page.title }} - {% endif %}{{ site.name }} - {{ site.description }}</title>
     {% include meta.html %}
-
-    <!--[if lt IE 9]>
-      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
     <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
-    <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
-
-    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
   </head>
 
   <body>
-    <div class="wrapper-masthead">
-      <div class="container">
-        <header class="masthead clearfix">
-          <a href="{{ site.baseurl }}/" class="site-avatar"><img src="{{ site.avatar }}" /></a>
+    <canvas class="living-grid" aria-hidden="true"></canvas>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-          <div class="site-info">
-            <h1 class="site-name"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
-            <p class="site-description">{{ site.description }}</p>
-          </div>
+    <div class="site-shell">
+      <header class="site-header" aria-label="Site header">
+        <a class="brand" href="{{ site.baseurl }}/" aria-label="{{ site.name }} home">KW</a>
+        <nav class="site-nav" aria-label="Primary">
+          {% for link in site.links %}
+            <a href="{{ link.url }}">{{ link.label }}</a>
+          {% endfor %}
+        </nav>
+      </header>
 
-          <nav>
-            <a href="{{ site.baseurl }}/">Blog</a>
-            <a href="{{ site.baseurl }}/about">About</a>
-          </nav>
-        </header>
-      </div>
+      <main id="main" role="main">
+        {{ content }}
+      </main>
+
+      <footer class="site-footer">
+        <p>{{ site.name }}</p>
+        <nav aria-label="Footer">
+          {% for link in site.links %}
+            <a href="{{ link.url }}">{{ link.label }}</a>
+          {% endfor %}
+        </nav>
+      </footer>
     </div>
 
-    <div id="main" role="main" class="container">
-      {{ content }}
-    </div>
-
-    <div class="wrapper-footer">
-      <div class="container">
-        <footer class="footer">
-          {% include svg-icons.html %}
-        </footer>
-      </div>
-    </div>
-
-    {% include analytics.html %}
+    <script src="{{ site.baseurl }}/living-grid.js" defer></script>
   </body>
 </html>

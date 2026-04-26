@@ -1,18 +1,57 @@
 ---
 layout: default
+title: Keith Wegner
 ---
 
-<div class="posts">
-  {% for post in site.posts %}
-    <article class="post">
+<section class="page-section hero-section" aria-labelledby="intro-title">
+  <div class="section-inner hero">
+    <p class="eyebrow">Principal / Bestgate Engineering</p>
+    <h1 id="intro-title">Keith Wegner</h1>
+    <p class="lede">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat
+      a ante venenatis dapibus posuere velit aliquet.
+    </p>
+    <p class="aside-copy">Focused, tidy, and only mildly dramatic.</p>
 
-      <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
+    <div class="hero-links" aria-label="Contact links">
+      {% for link in site.links %}
+        <a href="{{ link.url }}">{{ link.label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-      <div class="entry">
-        {{ post.excerpt }}
-      </div>
+<section class="page-section about-section" aria-labelledby="about-title">
+  <div class="section-inner section-grid">
+    <div>
+      <p class="section-kicker">About</p>
+      <h2 id="about-title">Lorem ipsum with a little more voltage.</h2>
+    </div>
+    <div class="section-copy">
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere
+        erat a ante venenatis dapibus posuere velit aliquet.
+      </p>
+      <p>
+        Donec ullamcorper nulla non metus auctor fringilla. Aenean lacinia
+        bibendum nulla sed consectetur.
+      </p>
+    </div>
+  </div>
+</section>
 
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
-    </article>
-  {% endfor %}
-</div>
+<section class="page-section contact-section" aria-labelledby="contact-title">
+  <div class="section-inner contact-panel">
+    <p class="section-kicker">Connect</p>
+    <h2 id="contact-title">Lorem ipsum, neatly routed.</h2>
+    <p>
+      Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius
+      blandit sit amet non magna.
+    </p>
+    <div class="hero-links" aria-label="Contact links">
+      {% for link in site.links %}
+        <a href="{{ link.url }}">{{ link.label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
