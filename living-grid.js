@@ -23,6 +23,7 @@
       viewportWidth: 0,
       viewportHeight: 0,
       dpr: 1,
+      bleed: 0,
       rect: null
     };
   }
@@ -33,12 +34,14 @@
 
     instance.viewportWidth = window.innerWidth;
     instance.viewportHeight = window.innerHeight;
+    instance.bleed = instance.section ? 1 : 0;
     instance.width = instance.section ? Math.max(rect.width, instance.viewportWidth) : instance.viewportWidth;
-    instance.height = instance.section ? Math.max(rect.height, 1) : instance.viewportHeight;
+    instance.height = instance.section ? Math.max(rect.height + (instance.bleed * 2), 1) : instance.viewportHeight;
     instance.dpr = Math.min(window.devicePixelRatio || 1, 1.75);
     instance.rect = rect;
     canvas.width = Math.ceil(instance.width * instance.dpr);
     canvas.height = Math.ceil(instance.height * instance.dpr);
+    canvas.style.top = instance.section ? "-" + instance.bleed + "px" : "";
     canvas.style.width = instance.width + "px";
     canvas.style.height = instance.height + "px";
     instance.ctx.setTransform(instance.dpr, 0, 0, instance.dpr, 0, 0);
@@ -83,7 +86,7 @@
 
     if (instance.section && instance.rect) {
       x -= instance.rect.left;
-      y -= instance.rect.top;
+      y -= instance.rect.top - instance.bleed;
     }
 
     return {
@@ -114,6 +117,8 @@
 
     ctx.clearRect(0, 0, instance.width, instance.height);
     ctx.lineWidth = 1;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
 
     if (instance.section) {
       instance.rect = instance.canvas.parentElement.getBoundingClientRect();
