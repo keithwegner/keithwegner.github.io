@@ -1,48 +1,71 @@
 (function () {
-  var canvas = document.querySelector(".living-grid");
+  var canvases = Array.prototype.slice.call(document.querySelectorAll(".living-grid, .section-living-grid"));
 
-  if (!canvas) {
+  if (!canvases.length) {
     return;
   }
 
-  var ctx = canvas.getContext("2d", { alpha: true });
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var nodes = [];
-  var columns = 0;
-  var rows = 0;
-  var spacing = 86;
-  var width = 0;
-  var height = 0;
-  var dpr = 1;
-  var frameId = 0;
+  var instances = canvases.map(createGrid);
 
-  function resize() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-    canvas.width = Math.ceil(width * dpr);
-    canvas.height = Math.ceil(height * dpr);
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    spacing = width < 720 ? 60 : 78;
-    buildNodes();
-    draw(reducedMotion.matches ? 900 : performance.now());
+  function createGrid(canvas) {
+    return {
+      canvas: canvas,
+      ctx: canvas.getContext("2d", { alpha: true }),
+      inverted: canvas.getAttribute("data-living-grid-theme") === "inverted",
+      section: canvas.classList.contains("section-living-grid"),
+      nodes: [],
+      columns: 0,
+      rows: 0,
+      spacing: 86,
+      width: 0,
+      height: 0,
+      viewportWidth: 0,
+      viewportHeight: 0,
+      dpr: 1,
+      rect: null
+    };
   }
 
-  function buildNodes() {
-    nodes = [];
-    columns = Math.ceil(width / spacing) + 3;
-    rows = Math.ceil(height / spacing) + 3;
+  function resizeInstance(instance) {
+    var canvas = instance.canvas;
+    var rect = instance.section ? canvas.parentElement.getBoundingClientRect() : null;
 
-    for (var row = 0; row < rows; row += 1) {
-      for (var column = 0; column < columns; column += 1) {
-        var stagger = row % 2 ? spacing * 0.5 : 0;
-        nodes.push({
+    instance.viewportWidth = window.innerWidth;
+    instance.viewportHeight = window.innerHeight;
+    instance.width = instance.section ? Math.max(rect.width, instance.viewportWidth) : instance.viewportWidth;
+    instance.height = instance.section ? Math.max(rect.height, 1) : instance.viewportHeight;
+    instance.dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+    instance.rect = rect;
+    canvas.width = Math.ceil(instance.width * instance.dpr);
+    canvas.height = Math.ceil(instance.height * instance.dpr);
+    canvas.style.width = instance.width + "px";
+    canvas.style.height = instance.height + "px";
+    instance.ctx.setTransform(instance.dpr, 0, 0, instance.dpr, 0, 0);
+    instance.spacing = instance.viewportWidth < 720 ? 60 : 78;
+    buildNodes(instance);
+  }
+
+  function resize() {
+    instances.forEach(function (instance) {
+      resizeInstance(instance);
+      draw(instance, reducedMotion.matches ? 900 : performance.now());
+    });
+  }
+
+  function buildNodes(instance) {
+    instance.nodes = [];
+    instance.columns = Math.ceil(instance.viewportWidth / instance.spacing) + 3;
+    instance.rows = Math.ceil(instance.viewportHeight / instance.spacing) + 3;
+
+    for (var row = 0; row < instance.rows; row += 1) {
+      for (var column = 0; column < instance.columns; column += 1) {
+        var stagger = row % 2 ? instance.spacing * 0.5 : 0;
+        instance.nodes.push({
           column: column,
           row: row,
-          x: column * spacing - spacing + stagger,
-          y: row * spacing - spacing,
+          x: column * instance.spacing - instance.spacing + stagger,
+          y: row * instance.spacing - instance.spacing,
           phase: (column * 0.72) + (row * 0.47),
           depth: 0.45 + (((column + row) % 5) * 0.1)
         });
@@ -50,43 +73,66 @@
     }
   }
 
-  function project(node, time) {
+  function project(instance, node, time) {
     var wave = Math.sin(time * 0.00082 + node.phase);
     var cross = Math.cos(time * 0.00056 + node.phase * 1.3);
-    var horizon = (node.y / Math.max(height, 1)) - 0.35;
+    var horizon = (node.y / Math.max(instance.viewportHeight, 1)) - 0.35;
     var perspective = 1 + (horizon * 0.08);
+    var x = (node.x * perspective) + (wave * 13 * node.depth);
+    var y = node.y + (cross * 20 * node.depth) + (wave * 8);
+
+    if (instance.section && instance.rect) {
+      x -= instance.rect.left;
+      y -= instance.rect.top;
+    }
 
     return {
-      x: (node.x * perspective) + (wave * 13 * node.depth),
-      y: node.y + (cross * 20 * node.depth) + (wave * 8),
+      x: x,
+      y: y,
+      viewportY: instance.section ? y + instance.rect.top : y,
       pulse: (wave + 1) * 0.5
     };
   }
 
-  function lineAlpha(a, b) {
-    var midpointY = (a.y + b.y) * 0.5;
-    var lowerBoost = Math.max(0, midpointY / Math.max(height, 1) - 0.35);
-    return 0.12 + lowerBoost * 0.08;
+  function lineAlpha(instance, a, b) {
+    var midpointY = (a.viewportY + b.viewportY) * 0.5;
+    var lowerBoost = Math.max(0, midpointY / Math.max(instance.viewportHeight, 1) - 0.35);
+    var base = instance.inverted ? 0.16 : 0.12;
+    var boost = instance.inverted ? 0.1 : 0.08;
+
+    return base + lowerBoost * boost;
   }
 
-  function draw(time) {
-    ctx.clearRect(0, 0, width, height);
+  function color(instance, alpha) {
+    var channel = instance.inverted ? "255, 255, 255" : "91, 44, 255";
+
+    return "rgba(" + channel + ", " + alpha.toFixed(3) + ")";
+  }
+
+  function draw(instance, time) {
+    var ctx = instance.ctx;
+
+    ctx.clearRect(0, 0, instance.width, instance.height);
     ctx.lineWidth = 1;
 
-    var projected = nodes.map(function (node) {
-      return project(node, time);
+    if (instance.section) {
+      instance.rect = instance.canvas.parentElement.getBoundingClientRect();
+    }
+
+    var projected = instance.nodes.map(function (node) {
+      return project(instance, node, time);
     });
 
     function pointFor(column, row) {
-      if (column < 0 || row < 0 || column >= columns || row >= rows) {
+      if (column < 0 || row < 0 || column >= instance.columns || row >= instance.rows) {
         return null;
       }
 
-      return projected[(row * columns) + column];
+      return projected[(row * instance.columns) + column];
     }
 
-    for (var row = 0; row < rows - 1; row += 1) {
-      for (var column = 0; column < columns - 1; column += 1) {
+    for (var row = 0; row < instance.rows - 1; row += 1) {
+      for (var column = 0; column < instance.columns - 1; column += 1) {
         var p1 = pointFor(column, row);
         var p2 = pointFor(column + 1, row);
         var p3 = pointFor(column, row + 1);
@@ -97,73 +143,85 @@
         }
 
         if ((row + column) % 3 === 0) {
-          drawFacet(p1, p2, p4, time);
+          drawFacet(instance, p1, p2, p4, time);
         }
 
-        drawLine(p1, p2);
-        drawLine(p1, p3);
+        drawLine(instance, p1, p2);
+        drawLine(instance, p1, p3);
 
         if ((row + column) % 2 === 0) {
-          drawLine(p1, p4);
+          drawLine(instance, p1, p4);
         }
       }
     }
 
     projected.forEach(function (point, index) {
       var radius = 1.35 + point.pulse * 1.1;
-      var alpha = 0.22 + point.pulse * 0.12;
+      var alpha = instance.inverted ? 0.26 + point.pulse * 0.14 : 0.22 + point.pulse * 0.12;
 
       if (index % 4 === 0) {
-        alpha *= 1.35;
+        alpha *= instance.inverted ? 1.2 : 1.35;
       }
 
       ctx.beginPath();
-      ctx.fillStyle = "rgba(91, 44, 255, " + alpha.toFixed(3) + ")";
+      ctx.fillStyle = color(instance, alpha);
       ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
       ctx.fill();
     });
   }
 
-  function drawLine(a, b) {
-    var alpha = lineAlpha(a, b);
+  function drawLine(instance, a, b) {
+    var alpha = lineAlpha(instance, a, b);
 
     if (alpha <= 0.01) {
       return;
     }
 
-    ctx.beginPath();
-    ctx.strokeStyle = "rgba(91, 44, 255, " + alpha.toFixed(3) + ")";
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
+    instance.ctx.beginPath();
+    instance.ctx.strokeStyle = color(instance, alpha);
+    instance.ctx.moveTo(a.x, a.y);
+    instance.ctx.lineTo(b.x, b.y);
+    instance.ctx.stroke();
   }
 
-  function drawFacet(a, b, c, time) {
-    var alpha = 0.034 + Math.sin(time * 0.00045 + a.x * 0.01) * 0.014;
+  function drawFacet(instance, a, b, c, time) {
+    var base = instance.inverted ? 0.045 : 0.034;
+    var wave = instance.inverted ? 0.018 : 0.014;
+    var alpha = base + Math.sin(time * 0.00045 + a.x * 0.01) * wave;
 
     if (alpha <= 0.004) {
       return;
     }
 
-    ctx.beginPath();
-    ctx.fillStyle = "rgba(91, 44, 255, " + alpha.toFixed(3) + ")";
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.lineTo(c.x, c.y);
-    ctx.closePath();
-    ctx.fill();
+    instance.ctx.beginPath();
+    instance.ctx.fillStyle = color(instance, alpha);
+    instance.ctx.moveTo(a.x, a.y);
+    instance.ctx.lineTo(b.x, b.y);
+    instance.ctx.lineTo(c.x, c.y);
+    instance.ctx.closePath();
+    instance.ctx.fill();
   }
 
+  var frameId = 0;
+
   function tick(time) {
-    draw(time);
+    instances.forEach(function (instance) {
+      draw(instance, time);
+    });
     frameId = window.requestAnimationFrame(tick);
+  }
+
+  function drawStatic() {
+    instances.forEach(function (instance) {
+      draw(instance, 900);
+    });
   }
 
   function start() {
     window.cancelAnimationFrame(frameId);
 
     if (reducedMotion.matches || document.hidden) {
-      draw(900);
+      drawStatic();
       return;
     }
 
@@ -171,6 +229,11 @@
   }
 
   window.addEventListener("resize", resize);
+  window.addEventListener("scroll", function () {
+    if (reducedMotion.matches) {
+      drawStatic();
+    }
+  }, { passive: true });
   document.addEventListener("visibilitychange", start);
 
   if (typeof reducedMotion.addEventListener === "function") {
