@@ -357,7 +357,7 @@ h1 {
 }
 
 .timeline-section .section-inner {
-  width: min(1480px, calc(100% - 40px));
+  width: min(1840px, calc(100% - 32px));
 }
 
 .timeline-heading {
@@ -367,12 +367,12 @@ h1 {
 .timeline-list {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   align-items: center;
-  gap: 30px;
+  gap: 16px;
   list-style: none;
   margin: 74px 0 0;
-  min-height: 620px;
+  min-height: 660px;
   padding: 0;
 }
 
@@ -391,7 +391,7 @@ h1 {
   position: relative;
   --timeline-card-y: 0;
   --timeline-card-hover-y: -6px;
-  min-height: 620px;
+  min-height: 660px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -438,6 +438,14 @@ h1 {
   animation-delay: -2.8s;
 }
 
+.timeline-item:nth-child(6) .timeline-node {
+  animation-delay: -3.5s;
+}
+
+.timeline-item:nth-child(7) .timeline-node {
+  animation-delay: -4.2s;
+}
+
 @keyframes timeline-node-drift {
   0%,
   100% {
@@ -454,9 +462,9 @@ h1 {
 .timeline-card {
   position: relative;
   z-index: 1;
-  width: min(100%, 296px);
+  width: min(100%, 236px);
   min-height: 160px;
-  padding: 20px;
+  padding: 18px;
   border: 1px solid rgba(91, 44, 255, 0.18);
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(8px);
@@ -507,7 +515,7 @@ h1 {
 .timeline-card h3 {
   margin: 0;
   color: var(--ink);
-  font-size: 1.25rem;
+  font-size: 1.12rem;
   font-weight: 900;
   line-height: 1.05;
 }
@@ -515,7 +523,7 @@ h1 {
 .timeline-card p:not(.timeline-year) {
   margin-top: 14px;
   color: var(--muted);
-  font-size: 0.96rem;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.34;
 }
