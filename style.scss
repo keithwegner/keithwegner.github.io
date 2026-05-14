@@ -367,7 +367,7 @@ h1 {
 .timeline-list {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   align-items: center;
   gap: 16px;
   list-style: none;
@@ -442,10 +442,6 @@ h1 {
   animation-delay: -3.5s;
 }
 
-.timeline-item:nth-child(7) .timeline-node {
-  animation-delay: -4.2s;
-}
-
 @keyframes timeline-node-drift {
   0%,
   100% {
@@ -510,6 +506,53 @@ h1 {
 .timeline-card:hover .timeline-year {
   color: var(--purple-dark);
   transform: translateX(2px);
+}
+
+.timeline-item--cluster .timeline-card {
+  position: absolute;
+  left: 50%;
+  width: min(100%, 236px);
+  transform: translateX(-50%);
+}
+
+.timeline-item--cluster .timeline-card:first-of-type {
+  bottom: calc(50% + 70px);
+}
+
+.timeline-item--cluster .timeline-card:last-of-type {
+  top: calc(50% + 70px);
+}
+
+.timeline-item--cluster .timeline-card:hover {
+  transform: translateX(-50%) scale(1.012);
+}
+
+.timeline-item--cluster .timeline-card:first-of-type:hover {
+  transform: translateX(-50%) translateY(-10px) scale(1.012);
+}
+
+.timeline-item--cluster .timeline-card:last-of-type:hover {
+  transform: translateX(-50%) translateY(10px) scale(1.012);
+}
+
+.timeline-item--cluster .timeline-card:first-of-type::after {
+  top: auto;
+  bottom: -70px;
+}
+
+.timeline-item--cluster .timeline-card:last-of-type::after {
+  top: -70px;
+  bottom: auto;
+}
+
+.timeline-item--final {
+  --timeline-card-y: calc(-50% - 70px);
+  --timeline-card-hover-y: calc(-50% - 80px);
+}
+
+.timeline-item--final .timeline-card::after {
+  top: auto;
+  bottom: -70px;
 }
 
 .timeline-card h3 {
@@ -674,6 +717,24 @@ h1 {
     transform: translateY(var(--timeline-card-y));
   }
 
+  .timeline-item--cluster .timeline-card {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    transform: translateY(var(--timeline-card-y));
+  }
+
+  .timeline-item--cluster .timeline-card + .timeline-card {
+    margin-top: 18px;
+  }
+
+  .timeline-item--final {
+    --timeline-card-y: 0;
+    --timeline-card-hover-y: -4px;
+  }
+
   .timeline-item:nth-child(odd) .timeline-card,
   .timeline-item:nth-child(even) .timeline-card {
     transform: translateY(var(--timeline-card-y));
@@ -681,7 +742,10 @@ h1 {
 
   .timeline-card:hover,
   .timeline-item:nth-child(odd) .timeline-card:hover,
-  .timeline-item:nth-child(even) .timeline-card:hover {
+  .timeline-item:nth-child(even) .timeline-card:hover,
+  .timeline-item--cluster .timeline-card:hover,
+  .timeline-item--cluster .timeline-card:first-of-type:hover,
+  .timeline-item--cluster .timeline-card:last-of-type:hover {
     transform: translateY(var(--timeline-card-hover-y)) scale(1.006);
   }
 
